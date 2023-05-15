@@ -45,9 +45,12 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
-    @RequestMapping("/login")
+    //登录
+    @PostMapping("/login")
+    @ResponseBody
     public int login(@RequestBody UserLoginDto user, HttpSession session) {
-        return userService.login(user, session);
+        int loginResult = userService.login(user, session);
+        return loginResult;
     }
 
     @RequestMapping("/search")
