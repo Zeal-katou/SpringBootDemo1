@@ -22,9 +22,9 @@
         methods: {
             login() {
                 axios.post("/login", v.user).then(function (response) {
-                    if (response.data == 1) {
+                    if (response.data == success) {
                         location.href = "/admin.html";
-                    } else if (response.data == 2) {
+                    } else if (response.data == fail) {
                         alert("密码错误!");
                     } else {
                         alert("用户名不存在!");

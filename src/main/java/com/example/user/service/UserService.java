@@ -16,6 +16,29 @@ public class UserService {
     @Autowired
     private UserMapper mapper;
 
+    /*注册*/
+    public int registerUser(User user) {
+        if (user.getUsername() == null || user.getUsername().equals(" ") ||
+                user.getPassword() == null || user.getPassword().equals(" ")) {
+            // 用户名密码为空
+            return 3;
+        }
+
+        user.setRole(1); // 设置默认权限为1
+
+        int row = mapper.selectByAdd(user);
+        if (row == 1) {
+            // 用户名已存在
+            return 2;
+        }
+
+        mapper.insert(user);
+        // 添加成功
+        return 1;
+    }
+
+
+    /*添加用户*/
     public int addUser(User user) {
         if (user.getUsername() == null || user.getUsername().equals(" ") ||
                 user.getPassword() == null || user.getPassword().equals(" ")) {
@@ -42,8 +65,9 @@ public class UserService {
         return 2;
     }
 
+    /*登陆*/
+
     public int login(UserLoginDto user, HttpSession session) {
-        System.out.println("user = " + user);
         UserVO u = mapper.selectByUsername(user.getUsername());
         if (u != null) {
             if (u.getPassword().equals(user.getPassword())) {

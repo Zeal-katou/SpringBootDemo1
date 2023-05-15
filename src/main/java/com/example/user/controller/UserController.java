@@ -17,6 +17,24 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    @PostMapping("/register")
+    public String register(@RequestBody User user) {
+        int result = userService.registerUser(user);
+
+        if (result == 3) {
+            return "exists"; // 用户名密码为空
+        } else if (result == 2) {
+            return "exists"; // 用户名已存在
+        } else if (result == 1) {
+            return "success"; // 注册成功
+        } else {
+            return "failure"; // 注册失败
+        }
+    }
+
+
+
     @RequestMapping("/add")
     public int add(@RequestBody User user) {
         return userService.addUser(user);
