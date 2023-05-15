@@ -23,20 +23,16 @@ public class UserService {
             // 用户名密码为空
             return 3;
         }
-
-        user.setRole(1); // 设置默认权限为1
-
+        user.setRole(1);   // 设置默认权限为1
         int row = mapper.selectByAdd(user);
         if (row == 1) {
             // 用户名已存在
             return 2;
         }
-
         mapper.insert(user);
         // 添加成功
         return 1;
     }
-
 
     /*添加用户*/
     public int addUser(User user) {
