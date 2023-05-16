@@ -1,10 +1,8 @@
 package com.example.user.controller;
 
-import com.example.user.mapper.UserMapper;
 import com.example.user.pojo.dto.UserLoginDto;
 import com.example.user.pojo.dto.UserUpdateDto;
 import com.example.user.pojo.entity.User;
-import com.example.user.pojo.vo.UserVO;
 import com.example.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

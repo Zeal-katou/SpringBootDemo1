@@ -1,5 +1,4 @@
 package com.example.user.service;
-
 import com.example.user.mapper.UserMapper;
 import com.example.user.pojo.dto.UserLoginDto;
 import com.example.user.pojo.dto.UserUpdateDto;
@@ -23,7 +22,7 @@ public class UserService {
             // 用户名密码为空
             return 3;
         }
-        user.setRole(1);   // 设置默认权限为1
+        user.setRole(1);
         int row = mapper.selectByAdd(user);
         if (row == 1) {
             // 用户名已存在

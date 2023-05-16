@@ -2,90 +2,181 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户管理</title>
+    <title>用户管理系统</title>
+    <style>
+        /* 样式表 */
+        body {
+            background-color: #f3f3f3;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 16px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        input[type=text] {
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 8px;
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-out;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #eee;
+        }
+
+        .button-link {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #008CBA;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease-out;
+        }
+
+        .button-link:hover {
+            background-color: #005F6B;
+        }
+
+        footer {
+            background-color: white;
+            border-top: 1px solid #ddd;
+            box-shadow: 0 -2px 2px 0 rgba(0,0,0,0.1);
+            padding: 16px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+<header>用户管理系统</header>
 <div>
-    <div align="center">
-        <h1>用户管理</h1>
-        <input type="text" v-model="username" placeholder="请输入查询名称" >
-        <input type="button" value="搜索" @click="v.selectSearch(username)" >
+    <div align="center" style="margin-top: 10px">
+        <input type="text" v-model="username" placeholder="请输入查询名称">
+        <button @click="searchUsers">搜索</button>
     </div>
-    <table id="dataTable" border="2" align="center"  style="margin-top: 10px">
+    <table id="dataTable">
+        <thead>
         <tr>
-            <th>id</th>
-            <th>账号</th>
+            <th>编号</th>
+            <th>用户名</th>
             <th>密码</th>
             <th>操作</th>
         </tr>
-        <tr v-for="users in arr">
-            <td>{{users.id}}</td>
-            <td>{{users.username}}</td>
-            <td>{{users.password}}</td>
-            <td v-if="admin">
-
-                <input type="button" value="删除" @click="v.delete(users.id)">
-                <a :href="'update.html?id='+users.id">修改</a>
+        </thead>
+        <tbody>
+        <tr v-for="(user, index) in users" :key="user.id" :class="[index%2 ? 'odd' : 'even']">
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.password }}</td>
+            <td v-if="isAdmin">
+                <button class="button-link" @click="deleteUser(user.id)">删除</button>
+                <a class="button-link" :href="'update.html?id=' + user.id">修改</a>
             </td>
             <td v-else>
                 暂无权限
             </td>
         </tr>
+        </tbody>
+        <tfoot>
         <tr>
-            <td colspan="4" v-if="admin">
-                <a style="color: red;text-align: center" href="/add.html">添加用户</a>
+            <td colspan="4" v-if="isAdmin">
+                <a class="button-link" href="/add.html">添加用户</a>
             </td>
             <td colspan="4" v-else>
                 暂无权限
             </td>
         </tr>
+        </tfoot>
     </table>
 </div>
+<footer>&copy;2023 ChatGPT All Rights Reserved.</footer>
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
-<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.6.14/vue.min.js"></script>
 <script>
-    let v = new Vue({
+    new Vue({
         el: "body>div",
         data: {
-            users:{id:"",username:"",password:"",role:""},
-            username:"",
-            admin:false,
-            arr:[]
+            users: [],
+            username: "",
+            isAdmin: false
         },
         methods: {
-            delete(id){
-                axios.get("/delete?id="+id).then(function (response) {
-                    let success = response.data==2?false:true;
+            deleteUser(id) {
+                axios.get("/delete?id=" + id).then(function (response) {
+                    let success = response.data === 1;
                     if (success) {
-                        alert("删除成功！")
+                        alert("删除成功！");
                         location.href = "/admin.html";
                     } else {
-                        alert("删除失败，用户不存在!");
+                        alert("删除失败，用户不存在！");
                     }
-                })
+                });
             },
-            selectSearch(username){
-                //发出获取所有用户的请求
-                axios.get("/search?username="+username).then(function (response) {
-                    v.arr = response.data;
-                })
+            searchUsers() {
+                axios.get("/search?username=" + this.username).then(response => {
+                    this.users = response.data;
+                });
             }
         },
-        created:function () {
-            //发出获取所有用户的请求
-            axios.get("/select").then(function (response) {
-                v.arr = response.data;
-            })
-            //发请求获取当前登录的用户对象
-            axios.get("/remSelect").then(function (response) {
-                //服务器响应的数据有可能是user对象 也有可能是空字符串(服务器响应的是null但是传输到客户端后变成了"")
-                v.admin = response.data==1?false:true;
-            })
-
-
+        created() {
+            axios.get("/select").then(response => {
+                this.users = response.data;
+            });
+            axios.get("/remSelect").then(response => {
+                this.isAdmin = response.data !== 1;
+            });
         }
-    })
+    });
 </script>
-
 </body>
 </html>
