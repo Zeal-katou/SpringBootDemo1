@@ -35,9 +35,11 @@ public class UserController {
 
 
 
-    @RequestMapping("/add")
-    public int add(@RequestBody User user) {
-        return userService.addUser(user);
+    @PostMapping("/addUser")
+    @ResponseBody
+    public int addUser(@RequestBody User user) {
+        int addUserResult = userService.addUser(user);
+        return addUserResult;
     }
 
     @RequestMapping("/delete")

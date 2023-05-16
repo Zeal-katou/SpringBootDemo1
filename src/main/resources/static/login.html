@@ -1,60 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>用户登录</title>
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+        }
+
+        #login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
-
 <body>
-<div id="app">
+<div id="login-container">
+    <h1>用户登录</h1>
     <form @submit.prevent="login">
-        <label for="username">Username:</label>
-        <input type="text" id="username" v-model="user.username" required><br>
+        <label for="username">账号：</label>
+        <input type="text" v-model="user.username" placeholder="请输入用户名"><br>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="user.password" required><br>
+        <label for="password">密码：</label>
+        <input type="password" v-model="user.password" placeholder="请输入密码"><br>
 
-        <button type="submit">Login</button>
+        <input type="submit" value="登录">
     </form>
 
-    <p v-if="loginError">{{ loginError }}</p>
+    <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
 </div>
 
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 <script>
-    const app = new Vue({
-        el: '#app',
+    let v = new Vue({
+        el: "#login-container",
         data: {
-            user: {
-                username: '',
-                password: ''
-            },
-            loginError: ''
+            user: {username: "", password: ""},
+            errorMessage: ""
         },
         methods: {
             login() {
-                axios.post('/login', this.user)
-                    .then(response => {
-                        const loginResult = response.data;
-                        if (loginResult === 1) {
-                            // 登录成功，跳转到admin页面
-                            window.location.href = '/admin';
-                        } else if (loginResult === 2) {
-                            this.loginError = '密码错误';
-                        } else if (loginResult === 3) {
-                            this.loginError = '用户名错误';
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
+                axios.post("/login", v.user).then(function (response) {
+                    if (response.data == 1) {
+                        location.href = "/admin.html";
+                    } else if (response.data == 2) {
+                        v.errorMessage = "密码错误!";
+                    } else {
+                        v.errorMessage = "用户名不存在!";
+                    }
+                })
             }
         }
-    });
+    })
 </script>
 </body>
-
 </html>
